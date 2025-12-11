@@ -22,7 +22,7 @@ const RootLayout: React.FC<Props> = (props) => {
     <html lang="ja">
       <body>
         <Header />
-        <div>{children}</div>
+        <div className="mx-4 mt-2 max-w-2xl md:mx-auto">{children}</div>
       </body>
     </html>
   );
