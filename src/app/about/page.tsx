@@ -5,6 +5,7 @@ import PostSummary from "@/app/_components/PostSummary";
 import dummyPosts from "@/app/_mocks/dummyPosts";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
+import dayjs from "dayjs";
 
 const Page: React.FC = () => {
   // 投稿データを「状態」として管理 (初期値はnull)
