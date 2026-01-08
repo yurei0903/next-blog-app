@@ -1,0 +1,12 @@
+# [Ctrl]+[Alt]+[R] で各セクションを実行
+
+### カテゴリ一覧の取得
+GET http://localhost:3000/api/categories
+
+### カテゴリの作成
+POST http://localhost:3000/api/admin/categories
+Content-Type: application/json
+
+{
+  "name": "カテゴリ9"
+}
