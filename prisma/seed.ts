@@ -6,13 +6,13 @@ const main = async () => {
   await prisma.post?.deleteMany();
   await prisma.category?.deleteMany();
 
-  // カテゴリデータの作成 (テーブルに対するレコードの挿入)
+  // カテゴリデータの作成 (レコードのInsert)
   const c1 = await prisma.category.create({ data: { name: "カテゴリ1" } });
   const c2 = await prisma.category.create({ data: { name: "カテゴリ2" } });
   const c3 = await prisma.category.create({ data: { name: "カテゴリ3" } });
   const c4 = await prisma.category.create({ data: { name: "カテゴリ4" } });
 
-  // 投稿記事データの作成  (テーブルに対するレコードの挿入)
+  // 投稿記事データの作成 (レコードのInsert)
   const p1 = await prisma.post.create({
     data: {
       title: "投稿1",
@@ -20,7 +20,7 @@ const main = async () => {
       coverImageURL:
         "https://w1980.blob.core.windows.net/pg3/cover-img-red.jpg",
       categories: {
-        create: [{ categoryId: c1.id }, { categoryId: c2.id }], // ◀◀ 注目
+        create: [{ categoryId: c1.id }, { categoryId: c2.id }],
       },
     },
   });
@@ -32,31 +32,33 @@ const main = async () => {
       coverImageURL:
         "https://w1980.blob.core.windows.net/pg3/cover-img-green.jpg",
       categories: {
-        create: [{ categoryId: c2.id }, { categoryId: c3.id }], // ◀◀ 注目
+        create: [{ categoryId: c2.id }, { categoryId: c3.id }],
       },
     },
   });
+
   const p3 = await prisma.post.create({
     data: {
       title: "投稿3",
       content: "投稿3の本文。<br/>投稿3の本文。投稿3の本文。",
       coverImageURL:
-        "https://w1980.blob.core.windows.net/pg3/cover-img-green.jpg",
+        "https://w1980.blob.core.windows.net/pg3/cover-img-yellow.jpg",
       categories: {
         create: [
           { categoryId: c1.id },
           { categoryId: c3.id },
           { categoryId: c4.id },
-        ], // ◀◀ 注目
+        ],
       },
     },
   });
+
   const p4 = await prisma.post.create({
     data: {
       title: "投稿4",
       content: "投稿4の本文。<br/>投稿4の本文。投稿4の本文。",
       coverImageURL:
-        "https://w1980.blob.core.windows.net/pg3/cover-img-green.jpg",
+        "https://w1980.blob.core.windows.net/pg3/cover-img-purple.jpg",
       categories: {
         create: [],
       },

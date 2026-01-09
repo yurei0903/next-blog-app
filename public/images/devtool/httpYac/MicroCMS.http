@@ -1,5 +1,37 @@
-# [Ctrl]+[Alt]+[R] で各セクションを実行
+### 投稿記事一覧の取得
+GET http://localhost:3000/api/posts
+### 記事の投稿
+POST http://localhost:3000/api/admin/posts
+Content-Type: application/json
 
+{
+  "title": "投稿X",
+  "content": "投稿Xの本文。<br/>投稿Xの本文。投稿Xの本文。",
+  "coverImageURL": "https://....",
+  "categoryIds": [
+    "22b67db0-2bdb-4ecf-87b9-7fa49f63355a"
+  ]
+}
+### 単体記事の取得
+@id=550d1f21-f14b-47c7-b254-ec6edb4c2f5a
+GET http://localhost:3000/api/posts/{{id}}
+### 記事の削除
+@id=550d1f21-f14b-47c7-b254-ec6edb4c2f5a
+DELETE http://localhost:3000/api/admin/posts/{{id}}
+### 投稿記事の更新
+@post_id = ba5248a3-cced-4626-8596-738a72c32271
+PUT http://localhost:3000/api/admin/posts/{{post_id}}
+Content-Type: application/json
+
+{
+  "title": "投稿Z",
+  "content": "投稿Zの本文。<br/>投稿Zの本文。投稿Zの本文。",
+  "coverImageURL": "https://....",
+  "categoryIds": [
+    "1cecb6b4-d12c-4c12-b4f5-e0eebfe6dfde",
+    "22b67db0-2bdb-4ecf-87b9-7fa49f63355a"
+  ]
+}
 ### カテゴリ一覧の取得
 GET http://localhost:3000/api/categories
 
@@ -8,5 +40,5 @@ POST http://localhost:3000/api/admin/categories
 Content-Type: application/json
 
 {
-  "name": "カテゴリ9"
+  "name": "カテゴリ5"
 }
