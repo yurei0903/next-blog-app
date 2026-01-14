@@ -17,10 +17,10 @@ const PostSummary: React.FC<Props> = (props) => {
           <div className="category-list mb-2 flex justify-end">
             {post.categories.map((category) => (
               <span
-                key={category.id}
+                key={category.category.id}
                 className="mr-2 inline-block rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-800"
               >
-                {category.name}
+                {category.category.name}
               </span>
             ))}
           </div>

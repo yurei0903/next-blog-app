@@ -16,6 +16,8 @@ export const GET = async (req: NextRequest, routeParams: RouteParams) => {
         title: true,
         content: true,
         createdAt: true,
+        updatedAt: true,
+        coverImageURL: true,
         categories: {
           select: {
             category: {
