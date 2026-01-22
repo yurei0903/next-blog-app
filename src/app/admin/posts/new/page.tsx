@@ -6,7 +6,7 @@ import { twMerge } from "tailwind-merge";
 import { Category } from "@/app/_types/Category";
 import { faTriangleExclamation } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
-
+import { useAuth } from "@/app/_hooks/useAuth";
 // カテゴリをフェッチしたときのレスポンスのデータ型
 type CategoryApiResponse = {
   id: string;
@@ -31,7 +31,7 @@ const Page: React.FC = () => {
   const [newCoverImageError, setNewCoverImageError] = useState("");
   const [newContent, setNewContent] = useState("");
   const [newContentError, setNewContentError] = useState("");
-
+  const { token } = useAuth(); // トークンの取得
   // カテゴリ配列 (State)。取得中と取得失敗時は null、既存カテゴリが0個なら []
   const [checkableCategories, setCheckableCategories] = useState<
     SelectableCategory[] | null
@@ -134,12 +134,17 @@ const Page: React.FC = () => {
 
     // ▼▼ 追加 ウェブAPI (/api/admin/categories) にPOSTリクエストを送信する処理
     try {
+      if (!token) {
+        window.alert("予期せぬ動作：トークンが取得できません。");
+        return;
+      }
       const requestUrl = "/api/admin/posts";
       const res = await fetch(requestUrl, {
         method: "POST",
         cache: "no-store",
         headers: {
           "Content-Type": "application/json",
+          Authorization: token,
         },
         body: JSON.stringify({
           title: newTitle,

@@ -9,7 +9,7 @@ Content-Type: application/json
   "content": "投稿Xの本文。<br/>投稿Xの本文。投稿Xの本文。",
   "coverImageURL": "https://....",
   "categoryIds": [
-    "22b67db0-2bdb-4ecf-87b9-7fa49f63355a"
+    "8ee3e63b-5fe9-4ef8-8764-6582f78ea109"
   ]
 }
 ### 単体記事の取得
@@ -42,3 +42,6 @@ Content-Type: application/json
 {
   "name": "カテゴリ5"
 }
+
+### 投稿記事一覧の取得
+GET http://localhost:3000/api/posts
