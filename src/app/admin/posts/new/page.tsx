@@ -130,7 +130,6 @@ const Page: React.FC = () => {
   // フォームのボタン (type="submit") がクリックされたときにコールされる関数
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // これを実行しないと意図せずページがリロードされるので注意
-    setIsSubmitting(true);
 
     // ▼▼ 追加 ウェブAPI (/api/admin/categories) にPOSTリクエストを送信する処理
     try {
@@ -138,6 +137,8 @@ const Page: React.FC = () => {
         window.alert("予期せぬ動作：トークンが取得できません。");
         return;
       }
+      setIsSubmitting(true);
+
       const requestUrl = "/api/admin/posts";
       const res = await fetch(requestUrl, {
         method: "POST",
