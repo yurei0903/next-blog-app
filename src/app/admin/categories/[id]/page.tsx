@@ -7,7 +7,7 @@ import { twMerge } from "tailwind-merge";
 import { Category } from "@/app/_types/Category";
 import { faTriangleExclamation } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
-
+import { useAuth } from "@/app/_hooks/useAuth";
 // カテゴリをフェッチしたときのレスポンスのデータ型
 type CategoryApiResponse = {
   id: string;
@@ -28,7 +28,7 @@ const Page: React.FC = () => {
   const [currentCategoryName, setCurrentNameCategory] = useState<
     string | undefined
   >(undefined);
-
+  const { token } = useAuth(); // トークンの取得
   // 動的ルートパラメータから id を取得 （URL:/admin/categories/[id]）
   const { id } = useParams() as { id: string };
 
@@ -42,12 +42,16 @@ const Page: React.FC = () => {
   const fetchCategories = async () => {
     try {
       setIsLoading(true);
+      setIsSubmitting(true);
 
       // フェッチ処理の本体
       const requestUrl = "/api/categories";
       const res = await fetch(requestUrl, {
         method: "GET",
         cache: "no-store",
+        headers: {
+          "Content-Type": "application/json",
+        },
       });
 
       // レスポンスのステータスコードが200以外の場合 (カテゴリのフェッチに失敗した場合)
@@ -76,6 +80,7 @@ const Page: React.FC = () => {
     } finally {
       // 成功した場合も失敗した場合もローディング状態を解除
       setIsLoading(false);
+      setIsSubmitting(false);
     }
   };
 
@@ -114,6 +119,10 @@ const Page: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // これを実行しないと意図せずページがリロードされるので注意
     setIsSubmitting(true);
+    if (!token) {
+      window.alert("予期せぬ動作：トークンが取得できません。");
+      return;
+    }
 
     try {
       const requestUrl = `/api/admin/categories/${id}`;
@@ -122,6 +131,7 @@ const Page: React.FC = () => {
         cache: "no-store",
         headers: {
           "Content-Type": "application/json",
+          Authorization: token,
         },
         body: JSON.stringify({ name: newCategoryName }),
       });
@@ -152,11 +162,19 @@ const Page: React.FC = () => {
     }
 
     setIsSubmitting(true);
+    if (!token) {
+      window.alert("予期せぬ動作：トークンが取得できません。");
+      return;
+    }
     try {
       const requestUrl = `/api/admin/categories/${id}`;
       const res = await fetch(requestUrl, {
         method: "DELETE",
         cache: "no-store",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: token,
+        },
       });
 
       if (!res.ok) {

@@ -71,12 +71,10 @@ const Page: React.FC = () => {
             ))}
           </div>
           <div>
-            {post.coverImageURL.url && (
+            {post.coverImageURL && (
               <Image
-                src={post.coverImageURL.url}
+                src={post.coverImageURL}
                 alt="Example Image"
-                width={post.coverImageURL.width}
-                height={post.coverImageURL.height}
                 priority
                 className="rounded-xl"
               />

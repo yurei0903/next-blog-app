@@ -29,7 +29,7 @@ const AdminCategorySummary: React.FC<Props> = ({ category, onDelete }) => {
       {/* 右下にボタンを配置するエリア */}
       <div className="mt-2 flex justify-end gap-2 border-t pt-2">
         <Link
-          href={`/admin/posts/${category.id}`}
+          href={`/admin/categories/${category.id}`}
           className="rounded bg-green-500 px-4 py-1 text-sm text-white hover:bg-green-600"
         >
           編集

@@ -6,11 +6,13 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import { is } from "date-fns/locale";
 import Link from "next/link";
+import { useAuth } from "@/app/_hooks/useAuth";
 
 const Page: React.FC = () => {
   const [posts, setPosts] = useState<Post[] | null>(null);
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { token } = useAuth();
   useEffect(() => {
     const fetchPosts = async () => {
       try {
@@ -40,12 +42,21 @@ const Page: React.FC = () => {
     if (!confirmDelete) {
       return;
     }
+    if (!token) {
+      window.alert("予期せぬ動作：トークンが取得できません。");
+      return;
+    }
+
     setIsSubmitting(true);
     try {
       const requestUrl = `/api/admin/posts/${id}`;
       const res = await fetch(requestUrl, {
         method: "DELETE",
         cache: "no-store",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: token,
+        },
       });
       if (!res.ok) {
         throw new Error(`${res.status}: ${res.statusText}`);

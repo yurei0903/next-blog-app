@@ -5,12 +5,12 @@ import CategoryConfig from "@/app/_components/CategoryConfig";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
-
+import { useAuth } from "@/app/_hooks/useAuth";
 const Page: React.FC = () => {
   const [categories, setCategories] = useState<Category[] | null>(null);
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
+  const { token } = useAuth(); // トークンの取得
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -41,11 +41,20 @@ const Page: React.FC = () => {
       return;
     }
     setIsSubmitting(true);
+    setIsSubmitting(true);
+    if (!token) {
+      window.alert("予期せぬ動作：トークンが取得できません。");
+      return;
+    }
     try {
       const requestUrl = `/api/admin/categories/${id}`;
       const res = await fetch(requestUrl, {
         method: "DELETE",
         cache: "no-store",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: token,
+        },
       });
       if (!res.ok) {
         throw new Error(`${res.status}: ${res.statusText}`);

@@ -8,6 +8,8 @@ import { faTriangleExclamation } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
 import type { Post } from "@/app/_types/Post";
 import { useParams } from "next/navigation";
+import { useAuth } from "@/app/_hooks/useAuth";
+import { ca } from "date-fns/locale";
 
 // カテゴリをフェッチしたときのレスポンスのデータ型
 type CategoryApiResponse = {
@@ -34,6 +36,7 @@ const Page: React.FC = () => {
   const [newContent, setNewContent] = useState("");
   const [newContentError, setNewContentError] = useState("");
   const [post, setPost] = useState<Post | null>(null);
+  const { token } = useAuth();
 
   const params = useParams();
 
@@ -107,7 +110,7 @@ const Page: React.FC = () => {
     if (post) {
       setNewTitle(post.title);
       setNewContent(post.content);
-      setNewCoverImage(post.coverImageURL.url);
+      setNewCoverImage(post.coverImageURL);
 
       // もしカテゴリのチェック状態も復元する必要があるならここで処理します
       // (post.categoryIds などを使って checkableCategories を更新するなど)
@@ -126,7 +129,6 @@ const Page: React.FC = () => {
     );
   };
 
-  // カテゴリの名前のバリデーション
   const isValidTitle = (name: string): string => {
     if (name.length < 2 || name.length > 16) {
       return "2文字以上16文字以内で入力してください。";
@@ -166,12 +168,34 @@ const Page: React.FC = () => {
     if (!confirmDelete) {
       return;
     }
+    try {
+      // 省略
+      if (!token) {
+        window.alert("予期せぬ動作：トークンが取得できません。");
+        return;
+      }
+    } catch (error) {
+      const errorMsg =
+        error instanceof Error
+          ? `投稿記事のDELETEリクエストに失敗しました\n${error.message}`
+          : `予期せぬエラーが発生しました\n${error}`;
+      console.error(errorMsg);
+      window.alert(errorMsg);
+    }
     setIsSubmitting(true);
+    if (!token) {
+      window.alert("予期せぬ動作：トークンが取得できません。");
+      return;
+    }
     try {
       const requestUrl = `/api/admin/posts/${id}`;
       const res = await fetch(requestUrl, {
         method: "DELETE",
         cache: "no-store",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: token,
+        },
       });
       if (!res.ok) {
         throw new Error(`${res.status}: ${res.statusText}`);
@@ -193,22 +217,37 @@ const Page: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // これを実行しないと意図せずページがリロードされるので注意
     setIsSubmitting(true);
-
-    // ▼▼ 追加 ウェブAPI (/api/admin/categories) にPOSTリクエストを送信する処理
     try {
+      if (!token) {
+        window.alert("予期せぬ動作：トークンが取得できません。");
+        return;
+      }
+    } catch (error) {
+      const errorMsg =
+        error instanceof Error
+          ? `投稿記事のPUTリクエストに失敗しました\n${error.message}`
+          : `予期せぬエラーが発生しました\n${error}`;
+      console.error(errorMsg);
+      window.alert(errorMsg);
+    }
+
+    try {
+      if (!token) {
+        window.alert("予期せぬ動作：トークンが取得できません。");
+        return;
+      }
       const requestUrl = `/api/admin/posts/${id}`;
       const res = await fetch(requestUrl, {
         method: "PUT",
         cache: "no-store",
         headers: {
           "Content-Type": "application/json",
+          Authorization: token,
         },
         body: JSON.stringify({
           title: newTitle,
           content: newContent,
-          coverImageURL: {
-            url: newCoverImage,
-          },
+          coverImageURL: [newCoverImage],
           categoryIds: checkableCategories
             ?.filter((c) => c.isSelect)
             .map((c) => c.id),
@@ -223,15 +262,13 @@ const Page: React.FC = () => {
     } catch (error) {
       const errorMsg =
         error instanceof Error
-          ? `投稿記事のPOSTリクエストに失敗しました\n${error.message}`
+          ? `投稿記事のPUTリクエストに失敗しました\n${error.message}`
           : `予期せぬエラーが発生しました\n${error}`;
       console.error(errorMsg);
       window.alert(errorMsg);
-    } finally {
-      setIsSubmitting(false);
     }
+    setIsSubmitting(false);
   };
-
   // カテゴリをウェブAPIから取得中の画面
   if (isLoading || !post) {
     return (
