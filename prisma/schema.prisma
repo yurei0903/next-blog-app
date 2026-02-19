@@ -53,5 +53,6 @@ model User {
   auth_id     String @unique
   email       String  @unique
   name        String?
+  
   posts Post[]
 }

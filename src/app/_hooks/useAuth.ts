@@ -1,12 +1,14 @@
+"use client";
 import { useState, useEffect } from "react";
 import { Session } from "@supabase/supabase-js";
 import { supabase } from "@/utils/supabase";
-
+import { User } from "@/generated/prisma/client";
+type UserType = User | null;
 export const useAuth = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [session, setSession] = useState<Session | null>(null);
   const [token, setToken] = useState<string | null>(null);
-
+  const [user, setUser] = useState<UserType | null>(null);
   useEffect(() => {
     // 初期セッションの取得
     const initAuth = async () => {
@@ -31,6 +33,9 @@ export const useAuth = () => {
       async (event, session) => {
         setSession(session);
         setToken(session?.access_token || null);
+        if (!session) {
+          setUser(null);
+        }
       },
     );
 
