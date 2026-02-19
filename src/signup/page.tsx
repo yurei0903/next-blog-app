@@ -1,9 +1,9 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEnvelope, faKey } from "@fortawesome/free-solid-svg-icons";
 import { twMerge } from "tailwind-merge";
-import ValidationAlert from "../_components/ValidationAlert";
+import ValidationAlert from "../app/_components/ValidationAlert";
 import { supabase } from "@/utils/supabase";
 import { useRouter } from "next/navigation";
 
@@ -17,7 +17,6 @@ const Page: React.FC = () => {
   const [nameError, setNameError] = useState("");
 
   const router = useRouter();
-
   const updateEmailField = (value: string) => {
     setEmail(value);
     if (value.length > 0 && !value.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
@@ -42,22 +41,46 @@ const Page: React.FC = () => {
     setLoginError("");
 
     try {
-      console.log("ログイン処理を実行します。");
-      const { error } = await supabase.auth.signInWithPassword({
+      console.log("サインアップ処理を実行します。");
+      const nameCheckRes = await fetch(
+        `/api/user/check-name?name=${account_name}`,
+      );
+      const { isAvailable } = await nameCheckRes.json();
+
+      if (!isAvailable) {
+        setNameError("そのアカウント名はすでに使われています。");
+        setIsSubmitting(false);
+        return; // 重複していたらここで処理をストップ！
+      }
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
       });
       if (error) {
-        setLoginError(
-          `ログインIDまたはパスワードが違います（${error.code}）。`,
-        );
+        setLoginError(`サインアップに失敗しました（${error.code}）。`);
         console.error(JSON.stringify(error, null, 2));
         return;
       }
-      console.log("ログイン処理に成功しました。");
+      if (data.user) {
+        const res = await fetch("/api/user", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            auth_id: data.user.id,
+            email: email,
+            name: account_name,
+          }),
+        });
+        if (!res.ok) {
+          throw new Error(
+            `ユーザー情報の保存に失敗しました（${res.status}）。`,
+          );
+        }
+      }
+      console.log("サインアップ処理に成功しました。");
       router.replace("/admin");
     } catch (error) {
-      setLoginError("ログイン処理中に予期せぬエラーが発生しました。");
+      setLoginError("サインアップ処理中に予期せぬエラーが発生しました。");
       console.error(JSON.stringify(error, null, 2));
     } finally {
       setIsSubmitting(false);
