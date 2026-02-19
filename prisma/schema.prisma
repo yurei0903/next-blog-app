@@ -23,6 +23,9 @@ model Post {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
   categories     PostCategory[]
+  published Boolean  @default(false)
+  author    User?    @relation(fields: [authorId], references: [id])
+  authorId  String?
 }
 
 // カテゴリテーブル
@@ -43,4 +46,12 @@ model PostCategory {
   updatedAt   DateTime @updatedAt
   category    Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   post        Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+}
+// user管理テーブル
+model User {
+  id          String @id @default(uuid())
+  auth_id     String @unique
+  email       String  @unique
+  name        String?
+  posts Post[]
 }

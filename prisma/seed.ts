@@ -5,7 +5,23 @@ const main = async () => {
   await prisma.postCategory?.deleteMany();
   await prisma.post?.deleteMany();
   await prisma.category?.deleteMany();
+  await prisma.user?.deleteMany();
+  // ユーザーデータの作成 (レコードのInsert)
+  const u1 = await prisma.user.create({
+    data: {
+      auth_id: "dummy-uuid-1",
+      email: "user1@example.com",
+      name: "ユーザー1",
+    },
+  });
 
+  const u2 = await prisma.user.create({
+    data: {
+      auth_id: "dummy-uuid-2",
+      email: "user2@example.com",
+      name: "ユーザー2",
+    },
+  });
   // カテゴリデータの作成 (レコードのInsert)
   const c1 = await prisma.category.create({ data: { name: "カテゴリ1" } });
   const c2 = await prisma.category.create({ data: { name: "カテゴリ2" } });
@@ -19,6 +35,8 @@ const main = async () => {
       content: "投稿1の本文。<br/>投稿1の本文。投稿1の本文。",
       coverImageURL:
         "https://w1980.blob.core.windows.net/pg3/cover-img-red.jpg",
+      published: true,
+      authorId: u1.id,
       categories: {
         create: [{ categoryId: c1.id }, { categoryId: c2.id }],
       },
@@ -31,6 +49,8 @@ const main = async () => {
       content: "投稿2の本文。<br/>投稿2の本文。投稿2の本文。",
       coverImageURL:
         "https://w1980.blob.core.windows.net/pg3/cover-img-green.jpg",
+      published: true,
+      authorId: u1.id,
       categories: {
         create: [{ categoryId: c2.id }, { categoryId: c3.id }],
       },
@@ -43,6 +63,8 @@ const main = async () => {
       content: "投稿3の本文。<br/>投稿3の本文。投稿3の本文。",
       coverImageURL:
         "https://w1980.blob.core.windows.net/pg3/cover-img-yellow.jpg",
+      published: true,
+      authorId: u2.id,
       categories: {
         create: [
           { categoryId: c1.id },
@@ -59,6 +81,8 @@ const main = async () => {
       content: "投稿4の本文。<br/>投稿4の本文。投稿4の本文。",
       coverImageURL:
         "https://w1980.blob.core.windows.net/pg3/cover-img-purple.jpg",
+      published: false, // 公開前の下書きという設定
+      authorId: u1.id,
       categories: {
         create: [],
       },
