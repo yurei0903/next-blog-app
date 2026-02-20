@@ -3,7 +3,7 @@ import Image from "next/image";
 import { twMerge } from "tailwind-merge";
 import { useState, useEffect } from "react";
 import type { Post } from "@/app/_types/Post";
-import PostConfig from "@/app/_components/PostConfig";
+import PostSummary from "@/app/_components/PostSummary";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
@@ -14,7 +14,7 @@ const Page: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // isLoading（取得中かどうかの判定）も useAuth から受け取ると便利です
-  const { token, isLoading } = useAuth();
+  const { token, isLoading, user: authUser } = useAuth();
 
   useEffect(() => {
     // 認証確認中またはトークンがない場合は、データの取得を行わない
@@ -103,7 +103,7 @@ const Page: React.FC = () => {
 
   return (
     <main>
-      <div className="mb-5 text-2xl font-bold">About</div>
+      <div className="mb-5 text-2xl font-bold">プロフィール</div>
 
       <div
         className={twMerge(
@@ -131,18 +131,18 @@ const Page: React.FC = () => {
           </div>
         </div>
       )}
-      <div className="my-1.5mb-2 text-2xl font-bold">Main</div>
-      <div className="my-2 flex w-full justify-end">
-        <Link
-          href="/admin/posts/new"
-          className="rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
-        >
-          投稿記事の新規作成
-        </Link>
+      <div>
+        {/* authUserの中に入っている名前とメールアドレスを表示 */}
+        <div className="text-2xl font-bold text-slate-800">
+          {authUser?.name || "名無しユーザー"}
+        </div>
+        <div className="mt-1 text-slate-500">{authUser?.email}</div>
       </div>
+      <div className="my-1.5mb-2 text-2xl font-bold">作成したブログ</div>
+
       <div className="my-1.5 space-y-3">
         {posts.map((post) => (
-          <PostConfig key={post.id} post={post} onDelete={handleDelete} />
+          <PostSummary key={post.id} post={post} />
         ))}
       </div>
     </main>

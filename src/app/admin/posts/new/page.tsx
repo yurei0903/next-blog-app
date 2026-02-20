@@ -7,6 +7,8 @@ import { Category } from "@/app/_types/Category";
 import { faTriangleExclamation } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
 import { useAuth } from "@/app/_hooks/useAuth";
+import { useRouter } from "next/navigation";
+
 // カテゴリをフェッチしたときのレスポンスのデータ型
 type CategoryApiResponse = {
   id: string;
@@ -37,6 +39,7 @@ const Page: React.FC = () => {
     SelectableCategory[] | null
   >(null);
 
+  const router = useRouter();
   // ウェブAPI (/api/categories) からカテゴリの一覧をフェッチする関数の定義
   const fetchCategories = async () => {
     try {
@@ -154,6 +157,7 @@ const Page: React.FC = () => {
           categoryIds: checkableCategories
             ?.filter((c) => c.isSelect)
             .map((c) => c.id),
+          published: true,
         }),
       });
 
@@ -165,6 +169,7 @@ const Page: React.FC = () => {
       setNewContent("");
       setNewCoverImage("");
       await fetchCategories(); // カテゴリの一覧を再取得
+      router.push("/about");
     } catch (error) {
       const errorMsg =
         error instanceof Error
@@ -214,13 +219,13 @@ const Page: React.FC = () => {
         className={twMerge("mb-4 space-y-4", isSubmitting && "opacity-50")}
       >
         <div className="space-y-1">
-          <label htmlFor="name" className="block font-bold">
+          <label htmlFor="title" className="block font-bold">
             タイトル
           </label>
           <input
             type="text"
-            id="name"
-            name="name"
+            id="title"
+            name="title"
             className="w-full rounded-md border-2 px-2 py-1"
             placeholder="新しい投稿記事のタイトルを記入してください"
             value={newTitle}
@@ -239,13 +244,13 @@ const Page: React.FC = () => {
           )}
         </div>
         <div className="space-y-1">
-          <label htmlFor="name" className="block font-bold">
+          <label htmlFor="content" className="block font-bold">
             本文
           </label>
           <input
             type="text"
-            id="name"
-            name="name"
+            id="content"
+            name="content"
             className="w-full rounded-md border-2 px-2 py-2.5"
             placeholder="新しい投稿記事の本文を記入してください"
             value={newContent}
@@ -264,13 +269,13 @@ const Page: React.FC = () => {
           )}
         </div>
         <div className="space-y-1">
-          <label htmlFor="name" className="block font-bold">
+          <label htmlFor="imageURL" className="block font-bold">
             カバーイメージ(画像URL)
           </label>
           <input
             type="text"
-            id="name"
-            name="name"
+            id="imageURL"
+            name="imageURL"
             className="w-full rounded-md border-2 px-2 py-1"
             placeholder="新しい投稿記事のカバーイメージ(画像URL)を記入してください"
             value={newCoverImage}
@@ -318,7 +323,15 @@ const Page: React.FC = () => {
               "bg-indigo-500 text-white hover:bg-indigo-600",
               "disabled:cursor-not-allowed disabled:opacity-50",
             )}
-            disabled={isSubmitting || newTitleError !== "" || newTitle === ""}
+            disabled={
+              isSubmitting ||
+              newTitleError !== "" ||
+              newTitle === "" ||
+              newContentError !== "" ||
+              newContent === "" ||
+              newCoverImageError !== "" ||
+              newCoverImage === ""
+            }
           >
             記事を作成
           </button>

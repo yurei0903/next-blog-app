@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { NextResponse, NextRequest } from "next/server";
-import type { Post } from "@/generated/prisma/client";
+import type { Post, User } from "@/generated/prisma/client";
 import { supabase } from "@/utils/supabase"; // ◀ 追加
 export const dynamic = "force-dynamic";
 type RequestBody = {
@@ -8,6 +8,9 @@ type RequestBody = {
   content: string;
   coverImageURL: string;
   categoryIds: string[];
+  published: boolean;
+  author: User;
+  authorId: string;
 };
 
 export const POST = async (req: NextRequest) => {
@@ -16,10 +19,36 @@ export const POST = async (req: NextRequest) => {
   if (error)
     return NextResponse.json({ error: error.message }, { status: 401 });
   try {
+    // 1. トークンの検証（誰からのリクエストか確認）
+    const token = req.headers.get("Authorization") ?? "";
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser(token);
+
+    if (authError || !user) {
+      return NextResponse.json(
+        { error: "認証に失敗しました" },
+        { status: 401 },
+      );
+    }
+
+    // 2. データベースから安全にユーザー情報を取得（GETと同じ！）
+    const dbUser = await prisma.user.findUnique({
+      where: { auth_id: user.id },
+    });
+
+    if (!dbUser) {
+      return NextResponse.json(
+        { error: "ユーザーが存在しません" },
+        { status: 404 },
+      );
+    }
     const requestBody: RequestBody = await req.json();
 
     // 分割代入
-    const { title, content, coverImageURL, categoryIds } = requestBody;
+    const { title, content, coverImageURL, categoryIds, published } =
+      requestBody;
 
     // categoryIds で指定されるカテゴリがDB上に存在するか確認
     const categories = await prisma.category.findMany({
@@ -35,13 +64,14 @@ export const POST = async (req: NextRequest) => {
         { status: 400 }, // 400: Bad Request
       );
     }
-
     // 投稿記事テーブルにレコードを追加
     const post: Post = await prisma.post.create({
       data: {
         title, // title: title の省略形であることに注意。以下も同様
         content,
         coverImageURL,
+        published,
+        authorId: dbUser.id, // 🌟 ここで「自分のユーザーID」をセットすることが重要！
       },
     });
 

@@ -10,8 +10,8 @@ interface Props {
 }
 const AdminLayout = ({ children }: Props) => {
   const router = useRouter();
-  const { isLoading, session } = useAuth();
-
+  const { isLoading, session, token, user } = useAuth();
+  console.log("AdminLayout: session", session);
   useEffect(() => {
     // 認証状況の確認中は何もせずに戻る
     if (isLoading) {
