@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEnvelope, faKey } from "@fortawesome/free-solid-svg-icons";
 import { twMerge } from "tailwind-merge";
-import ValidationAlert from "../app/_components/ValidationAlert";
+import ValidationAlert from "../_components/ValidationAlert";
 import { supabase } from "@/utils/supabase";
 import { useRouter } from "next/navigation";
 
@@ -42,15 +42,32 @@ const Page: React.FC = () => {
 
     try {
       console.log("サインアップ処理を実行します。");
-      const nameCheckRes = await fetch(
-        `/api/user/check-name?name=${account_name}`,
+      const checkRes = await fetch(
+        `/api/user/check-availability?name=${account_name}&email=${email}`,
       );
-      const { isAvailable } = await nameCheckRes.json();
 
-      if (!isAvailable) {
-        setNameError("そのアカウント名はすでに使われています。");
+      if (!checkRes.ok) {
+        throw new Error("重複チェックAPIの通信に失敗しました。");
+      }
+
+      const { isNameAvailable, isEmailAvailable } = await checkRes.json();
+
+      //判定結果をもとに、エラーメッセージをセットする
+      let hasError = false;
+
+      if (!isNameAvailable) {
+        setNameError("このアカウント名は既に使われています。");
+        hasError = true;
+      }
+      if (!isEmailAvailable) {
+        setEmailError("このメールアドレスは既に登録されています。");
+        hasError = true;
+      }
+
+      // どちらか1つでも重複していたら、ここで処理を止める
+      if (hasError) {
         setIsSubmitting(false);
-        return; // 重複していたらここで処理をストップ！
+        return;
       }
       const { data, error } = await supabase.auth.signUp({
         email,
@@ -78,7 +95,7 @@ const Page: React.FC = () => {
         }
       }
       console.log("サインアップ処理に成功しました。");
-      router.replace("/admin");
+      router.replace("/login");
     } catch (error) {
       setLoginError("サインアップ処理中に予期せぬエラーが発生しました。");
       console.error(JSON.stringify(error, null, 2));
