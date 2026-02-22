@@ -8,7 +8,7 @@ export async function doConnect() {
     return Error("DB接続に失敗しました");
   }
 }
-export const GET = async (req: Request, res: NextResponse) => {
+export const GET = async (req: Request) => {
   const auth_id: string = req.url.split("/user/")[1];
   console.log(auth_id);
 
