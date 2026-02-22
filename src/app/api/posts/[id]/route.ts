@@ -31,6 +31,12 @@ export const GET = async (req: NextRequest, routeParams: RouteParams) => {
             },
           },
         },
+        author: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
       },
     });
     if (!result) {
