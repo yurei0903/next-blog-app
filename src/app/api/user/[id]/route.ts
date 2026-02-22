@@ -32,3 +32,9 @@ export const GET = async (req: Request, routeParams: RouteParams) => {
     await prisma.$disconnect();
   }
 };
+type Requests = {
+  params: Promise<{
+    name: string | null;
+    mail_address: string | null;
+  }>;
+};

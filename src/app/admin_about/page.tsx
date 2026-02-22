@@ -3,7 +3,7 @@ import Image from "next/image";
 import { twMerge } from "tailwind-merge";
 import { useState, useEffect } from "react";
 import type { Post } from "@/app/_types/Post";
-import PostSummary from "@/app/_components/PostSummary";
+import PostConfig from "@/app/_components/PostConfig";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
@@ -138,11 +138,16 @@ const Page: React.FC = () => {
         </div>
         <div className="mt-1 text-slate-500">{authUser?.email}</div>
       </div>
-      <div className="my-1.5mb-2 text-2xl font-bold">作成したブログ</div>
-
-      <div className="my-1.5 space-y-3">
+      <div className="my-3 mb-2 text-2xl font-bold">作成したブログ</div>
+      <Link
+        href="/admin/posts/new"
+        className="my-2.5 rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
+      >
+        投稿記事の新規作成
+      </Link>
+      <div className="my-2.5 space-y-3">
         {posts.map((post) => (
-          <PostSummary key={post.id} post={post} />
+          <PostConfig key={post.id} post={post} onDelete={handleDelete} />
         ))}
       </div>
     </main>
