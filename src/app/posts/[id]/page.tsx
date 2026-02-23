@@ -1,17 +1,24 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import { useParams } from "next/navigation"; // ◀ 注目
 
 import type { Post } from "@/app/_types/Post";
+import type { User } from "@/app/_types/User";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import Image from "next/image";
 import dayjs from "dayjs";
 import DOMPurify from "isomorphic-dompurify";
+import CryptoJS from "crypto-js";
+import { supabase } from "@/utils/supabase";
+import Link from "next/link";
 
 const Page: React.FC = () => {
+  const bucketName = "cover-image";
   const [post, setPost] = useState<Post | null>(null);
   const [fetchError, setFetchError] = useState<string | null>(null);
+  const [coverImageUrl, setCoverImageUrl] = useState<string | undefined>();
+  const [authUser, setAuthUser] = useState<User | null>(null);
   const params = useParams();
   // params.id は string | string[] なので、明示的に文字列として扱います
   const id = params.id as string;
@@ -30,6 +37,12 @@ const Page: React.FC = () => {
         }
         const data = await response.json();
         setPost(data as Post);
+        if (data.coverImageKey) {
+          const publicUrlResult = supabase.storage
+            .from(bucketName)
+            .getPublicUrl(data.coverImageKey);
+          setCoverImageUrl(publicUrlResult.data.publicUrl);
+        }
       } catch (e) {
         setFetchError(
           e instanceof Error ? e.message : "予期せぬエラーが発生しました",
@@ -38,7 +51,33 @@ const Page: React.FC = () => {
     };
     fetchPosts();
   }, [id]);
+  useEffect(() => {
+    if (!post || !post.author.id) return;
 
+    const fechAuthUser = async () => {
+      try {
+        const authorId = post.author.id;
+        // useidの状態を介さず直接IDを使っても良い
+        const requestUrl = `/api/user/namemail/${authorId}`;
+        const response = await fetch(requestUrl, {
+          method: "GET",
+          cache: "no-store",
+        });
+        if (!response.ok) {
+          throw new Error("情報の取得に失敗しました");
+        }
+        const data = await response.json();
+        console.log("APIから届いたユーザー情報:", data);
+        setAuthUser(data.user as User);
+      } catch (e) {
+        setFetchError(
+          e instanceof Error ? e.message : "予期せぬエラーが発生しました",
+        );
+      }
+    };
+
+    fechAuthUser();
+  }, [post]);
   if (fetchError) {
     return <div>{fetchError}</div>;
   }
@@ -60,6 +99,12 @@ const Page: React.FC = () => {
           <div className="text-sm text-gray-500">
             投稿日: {dayjs(post.createdAt).format("YYYY-MM-DD HH:mm")}
           </div>
+          <Link
+            href={`/about/${post.author.id}`}
+            className="text-sm text-gray-500"
+          >
+            作者: {authUser?.name ?? "名無しさん"}
+          </Link>
           <div className="category-list">
             {post.categories.map((category) => (
               <div
@@ -71,14 +116,16 @@ const Page: React.FC = () => {
             ))}
           </div>
           <div>
-            {/**{post.coverImageURL && (
+            {coverImageUrl && (
               <Image
-                src={post.coverImageURL}
+                src={coverImageUrl} // coverImageUrlが利用可能ならそれを、そうでなければプレースホルダー画像を表示
                 alt="Example Image"
                 priority
-                className="rounded-xl"
+                className="h-auto w-full rounded-xl"
+                width={800}
+                height={450}
               />
-            )}**/}
+            )}
           </div>
           <div dangerouslySetInnerHTML={{ __html: safeHTML }} />
         </div>

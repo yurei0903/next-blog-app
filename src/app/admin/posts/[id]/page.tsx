@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, ChangeEvent } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import { twMerge } from "tailwind-merge";
@@ -10,7 +10,14 @@ import type { Post } from "@/app/_types/Post";
 import { useParams } from "next/navigation";
 import { useAuth } from "@/app/_hooks/useAuth";
 import { ca } from "date-fns/locale";
-
+import CryptoJS from "crypto-js";
+import { supabase } from "@/utils/supabase";
+import { useRouter } from "next/navigation";
+const calculateMD5Hash = async (file: File): Promise<string> => {
+  const buffer = await file.arrayBuffer();
+  const wordArray = CryptoJS.lib.WordArray.create(buffer);
+  return CryptoJS.MD5(wordArray).toString();
+};
 // カテゴリをフェッチしたときのレスポンスのデータ型
 type CategoryApiResponse = {
   id: string;
@@ -26,20 +33,23 @@ type SelectableCategory = {
 
 // カテゴリの新規作成 (追加) のページ
 const Page: React.FC = () => {
+  const bucketName = "cover-image";
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [fetchErrorMsg, setFetchErrorMsg] = useState<string | null>(null);
   const [newTitle, setNewTitle] = useState("");
   const [newTitleError, setNewTitleError] = useState("");
-  const [newCoverImage, setNewCoverImage] = useState("");
-  const [newCoverImageError, setNewCoverImageError] = useState("");
   const [newContent, setNewContent] = useState("");
   const [newContentError, setNewContentError] = useState("");
   const [post, setPost] = useState<Post | null>(null);
+  const [isPublished, setIsPublished] = useState(true);
+  const [coverImageUrl, setCoverImageUrl] = useState<string | undefined>();
+  const [coverImageKey, setCoverImageKey] = useState<string | undefined>();
+  const [coverImageKeyError, setNewCoverImageKeyError] = useState("");
   const { token } = useAuth();
 
   const params = useParams();
-
+  const router = useRouter();
   const id = params.id as string;
   // カテゴリ配列 (State)。取得中と取得失敗時は null、既存カテゴリが0個なら []
   const [checkableCategories, setCheckableCategories] = useState<
@@ -110,7 +120,13 @@ const Page: React.FC = () => {
     if (post) {
       setNewTitle(post.title);
       setNewContent(post.content);
-      setNewCoverImage(post.coverImageURL);
+      setCoverImageKey(post.coverImageKey);
+      if (post.coverImageKey) {
+        const publicUrlResult = supabase.storage
+          .from("cover-image")
+          .getPublicUrl(post.coverImageKey);
+        setCoverImageUrl(publicUrlResult.data.publicUrl);
+      }
 
       // もしカテゴリのチェック状態も復元する必要があるならここで処理します
       // (post.categoryIds などを使って checkableCategories を更新するなど)
@@ -152,13 +168,13 @@ const Page: React.FC = () => {
     setNewTitleError(isValidTitle(e.target.value));
     setNewTitle(e.target.value);
   };
-  const updateNewContent = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const updateNewContent = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setNewContentError(isValidContent(e.target.value));
     setNewContent(e.target.value);
   };
   const updateNewCoverImage = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setNewCoverImageError(isValidCoverImage(e.target.value));
-    setNewCoverImage(e.target.value);
+    setNewCoverImageKeyError(isValidCoverImage(e.target.value));
+    setCoverImageKey(e.target.value);
   };
   // 記事の削除を実行する関数
   const handleDelete = async () => {
@@ -247,8 +263,10 @@ const Page: React.FC = () => {
         body: JSON.stringify({
           title: newTitle,
           content: newContent,
-          coverImageURL: [newCoverImage],
+          coverImageKey: coverImageKey,
+          published: isPublished,
           categoryIds: checkableCategories
+
             ?.filter((c) => c.isSelect)
             .map((c) => c.id),
         }),
@@ -266,8 +284,10 @@ const Page: React.FC = () => {
           : `予期せぬエラーが発生しました\n${error}`;
       console.error(errorMsg);
       window.alert(errorMsg);
+    } finally {
+      setIsSubmitting(false);
+      router.push("/admin/about");
     }
-    setIsSubmitting(false);
   };
   // カテゴリをウェブAPIから取得中の画面
   if (isLoading || !post) {
@@ -278,6 +298,36 @@ const Page: React.FC = () => {
       </div>
     );
   }
+  const handleImageChange = async (e: ChangeEvent<HTMLInputElement>) => {
+    setCoverImageKey(undefined); // 画像のキーをリセット
+    setCoverImageUrl(undefined); // 画像のURLをリセット
+
+    // 画像が選択されていない場合は戻る
+    if (!e.target.files || e.target.files.length === 0) return;
+
+    // 複数ファイルが選択されている場合は最初のファイルを使用する
+    const file = e.target.files?.[0];
+    // ファイルのハッシュ値を計算
+    const fileHash = await calculateMD5Hash(file); // ◀ 追加
+    // バケット内のパスを指定
+    const path = `private/${fileHash}`; // ◀ 変更
+    // ファイルが存在する場合は上書きするための設定 → upsert: true
+    const { data, error } = await supabase.storage
+      .from(bucketName)
+      .upload(path, file, { upsert: true });
+
+    if (error || !data) {
+      window.alert(`アップロードに失敗 ${error.message}`);
+      return;
+    }
+    // 画像のキー (実質的にバケット内のパス) を取得
+    setCoverImageKey(data.path);
+    const publicUrlResult = supabase.storage
+      .from(bucketName)
+      .getPublicUrl(data.path);
+    // 画像のURLを取得
+    setCoverImageUrl(publicUrlResult.data.publicUrl);
+  };
 
   // カテゴリをウェブAPIから取得することに失敗したときの画面
   if (!checkableCategories) {
@@ -334,10 +384,9 @@ const Page: React.FC = () => {
           <label htmlFor="name" className="block font-bold">
             本文
           </label>
-          <input
-            type="text"
-            id="name"
-            name="name"
+          <textarea
+            id="content"
+            name="content"
             className="w-full rounded-md border-2 px-2 py-2.5"
             placeholder="新しい投稿記事の本文を記入してください"
             value={newContent}
@@ -359,26 +408,31 @@ const Page: React.FC = () => {
           <label htmlFor="name" className="block font-bold">
             カバーイメージ(画像URL)
           </label>
-          <input
-            type="text"
-            id="name"
-            name="name"
-            className="w-full rounded-md border-2 px-2 py-1"
-            placeholder="新しい投稿記事のカバーイメージ(画像URL)を記入してください"
-            value={newCoverImage}
-            onChange={updateNewCoverImage}
-            autoComplete="off"
-            required
-          />
-          {newCoverImageError && (
-            <div className="flex items-center space-x-1 text-sm font-bold text-red-500">
-              <FontAwesomeIcon
-                icon={faTriangleExclamation}
-                className="mr-0.5"
-              />
-              <div>{newCoverImageError}</div>
+          <div>
+            <input
+              id="imgSelector"
+              type="file" // ファイルを選択するinput要素に設定
+              accept="image/*" // 画像ファイルのみを選択可能に設定
+              onChange={handleImageChange}
+              className={twMerge(
+                "file:rounded file:px-2 file:py-1",
+                "file:bg-blue-500 file:text-white hover:file:bg-blue-600",
+                "file:cursor-pointer",
+              )}
+            />
+            <div className="text-sm break-all">
+              coverImageKey : {coverImageKey}
             </div>
-          )}
+            {coverImageKeyError && (
+              <div className="flex items-center space-x-1 text-sm font-bold text-red-500">
+                <FontAwesomeIcon
+                  icon={faTriangleExclamation}
+                  className="mr-0.5"
+                />
+                <div>{coverImageKeyError}</div>
+              </div>
+            )}
+          </div>
         </div>
         <div className="space-y-1">
           <div className="font-bold">タグ</div>
@@ -401,6 +455,16 @@ const Page: React.FC = () => {
             )}
           </div>
         </div>
+        <label className="flex space-x-1">
+          <input
+            id="published"
+            type="checkbox"
+            checked={isPublished}
+            className="mt-0.5 cursor-pointer"
+            onChange={() => setIsPublished(!isPublished)}
+          />
+          <span className="cursor-pointer">公開する</span>
+        </label>
 
         <div className="flex justify-end">
           <button

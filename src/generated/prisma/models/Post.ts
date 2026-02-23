@@ -28,7 +28,7 @@ export type PostMinAggregateOutputType = {
   id: string | null
   title: string | null
   content: string | null
-  coverImageURL: string | null
+  coverImageKey: string | null
   createdAt: Date | null
   updatedAt: Date | null
   published: boolean | null
@@ -39,7 +39,7 @@ export type PostMaxAggregateOutputType = {
   id: string | null
   title: string | null
   content: string | null
-  coverImageURL: string | null
+  coverImageKey: string | null
   createdAt: Date | null
   updatedAt: Date | null
   published: boolean | null
@@ -50,7 +50,7 @@ export type PostCountAggregateOutputType = {
   id: number
   title: number
   content: number
-  coverImageURL: number
+  coverImageKey: number
   createdAt: number
   updatedAt: number
   published: number
@@ -63,7 +63,7 @@ export type PostMinAggregateInputType = {
   id?: true
   title?: true
   content?: true
-  coverImageURL?: true
+  coverImageKey?: true
   createdAt?: true
   updatedAt?: true
   published?: true
@@ -74,7 +74,7 @@ export type PostMaxAggregateInputType = {
   id?: true
   title?: true
   content?: true
-  coverImageURL?: true
+  coverImageKey?: true
   createdAt?: true
   updatedAt?: true
   published?: true
@@ -85,7 +85,7 @@ export type PostCountAggregateInputType = {
   id?: true
   title?: true
   content?: true
-  coverImageURL?: true
+  coverImageKey?: true
   createdAt?: true
   updatedAt?: true
   published?: true
@@ -169,7 +169,7 @@ export type PostGroupByOutputType = {
   id: string
   title: string
   content: string
-  coverImageURL: string
+  coverImageKey: string
   createdAt: Date
   updatedAt: Date
   published: boolean
@@ -201,7 +201,7 @@ export type PostWhereInput = {
   id?: Prisma.StringFilter<"Post"> | string
   title?: Prisma.StringFilter<"Post"> | string
   content?: Prisma.StringFilter<"Post"> | string
-  coverImageURL?: Prisma.StringFilter<"Post"> | string
+  coverImageKey?: Prisma.StringFilter<"Post"> | string
   createdAt?: Prisma.DateTimeFilter<"Post"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Post"> | Date | string
   published?: Prisma.BoolFilter<"Post"> | boolean
@@ -214,7 +214,7 @@ export type PostOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   title?: Prisma.SortOrder
   content?: Prisma.SortOrder
-  coverImageURL?: Prisma.SortOrder
+  coverImageKey?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   published?: Prisma.SortOrder
@@ -230,7 +230,7 @@ export type PostWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.PostWhereInput | Prisma.PostWhereInput[]
   title?: Prisma.StringFilter<"Post"> | string
   content?: Prisma.StringFilter<"Post"> | string
-  coverImageURL?: Prisma.StringFilter<"Post"> | string
+  coverImageKey?: Prisma.StringFilter<"Post"> | string
   createdAt?: Prisma.DateTimeFilter<"Post"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Post"> | Date | string
   published?: Prisma.BoolFilter<"Post"> | boolean
@@ -243,7 +243,7 @@ export type PostOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   title?: Prisma.SortOrder
   content?: Prisma.SortOrder
-  coverImageURL?: Prisma.SortOrder
+  coverImageKey?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   published?: Prisma.SortOrder
@@ -260,7 +260,7 @@ export type PostScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"Post"> | string
   title?: Prisma.StringWithAggregatesFilter<"Post"> | string
   content?: Prisma.StringWithAggregatesFilter<"Post"> | string
-  coverImageURL?: Prisma.StringWithAggregatesFilter<"Post"> | string
+  coverImageKey?: Prisma.StringWithAggregatesFilter<"Post"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Post"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Post"> | Date | string
   published?: Prisma.BoolWithAggregatesFilter<"Post"> | boolean
@@ -271,7 +271,7 @@ export type PostCreateInput = {
   id?: string
   title: string
   content: string
-  coverImageURL: string
+  coverImageKey: string
   createdAt?: Date | string
   updatedAt?: Date | string
   published?: boolean
@@ -283,7 +283,7 @@ export type PostUncheckedCreateInput = {
   id?: string
   title: string
   content: string
-  coverImageURL: string
+  coverImageKey: string
   createdAt?: Date | string
   updatedAt?: Date | string
   published?: boolean
@@ -295,7 +295,7 @@ export type PostUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
-  coverImageURL?: Prisma.StringFieldUpdateOperationsInput | string
+  coverImageKey?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   published?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -307,7 +307,7 @@ export type PostUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
-  coverImageURL?: Prisma.StringFieldUpdateOperationsInput | string
+  coverImageKey?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   published?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -319,7 +319,7 @@ export type PostCreateManyInput = {
   id?: string
   title: string
   content: string
-  coverImageURL: string
+  coverImageKey: string
   createdAt?: Date | string
   updatedAt?: Date | string
   published?: boolean
@@ -330,7 +330,7 @@ export type PostUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
-  coverImageURL?: Prisma.StringFieldUpdateOperationsInput | string
+  coverImageKey?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   published?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -340,7 +340,7 @@ export type PostUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
-  coverImageURL?: Prisma.StringFieldUpdateOperationsInput | string
+  coverImageKey?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   published?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -351,7 +351,7 @@ export type PostCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   title?: Prisma.SortOrder
   content?: Prisma.SortOrder
-  coverImageURL?: Prisma.SortOrder
+  coverImageKey?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   published?: Prisma.SortOrder
@@ -362,7 +362,7 @@ export type PostMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   title?: Prisma.SortOrder
   content?: Prisma.SortOrder
-  coverImageURL?: Prisma.SortOrder
+  coverImageKey?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   published?: Prisma.SortOrder
@@ -373,7 +373,7 @@ export type PostMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   title?: Prisma.SortOrder
   content?: Prisma.SortOrder
-  coverImageURL?: Prisma.SortOrder
+  coverImageKey?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   published?: Prisma.SortOrder
@@ -471,7 +471,7 @@ export type PostCreateWithoutCategoriesInput = {
   id?: string
   title: string
   content: string
-  coverImageURL: string
+  coverImageKey: string
   createdAt?: Date | string
   updatedAt?: Date | string
   published?: boolean
@@ -482,7 +482,7 @@ export type PostUncheckedCreateWithoutCategoriesInput = {
   id?: string
   title: string
   content: string
-  coverImageURL: string
+  coverImageKey: string
   createdAt?: Date | string
   updatedAt?: Date | string
   published?: boolean
@@ -509,7 +509,7 @@ export type PostUpdateWithoutCategoriesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
-  coverImageURL?: Prisma.StringFieldUpdateOperationsInput | string
+  coverImageKey?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   published?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -520,7 +520,7 @@ export type PostUncheckedUpdateWithoutCategoriesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
-  coverImageURL?: Prisma.StringFieldUpdateOperationsInput | string
+  coverImageKey?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   published?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -531,7 +531,7 @@ export type PostCreateWithoutAuthorInput = {
   id?: string
   title: string
   content: string
-  coverImageURL: string
+  coverImageKey: string
   createdAt?: Date | string
   updatedAt?: Date | string
   published?: boolean
@@ -542,7 +542,7 @@ export type PostUncheckedCreateWithoutAuthorInput = {
   id?: string
   title: string
   content: string
-  coverImageURL: string
+  coverImageKey: string
   createdAt?: Date | string
   updatedAt?: Date | string
   published?: boolean
@@ -582,7 +582,7 @@ export type PostScalarWhereInput = {
   id?: Prisma.StringFilter<"Post"> | string
   title?: Prisma.StringFilter<"Post"> | string
   content?: Prisma.StringFilter<"Post"> | string
-  coverImageURL?: Prisma.StringFilter<"Post"> | string
+  coverImageKey?: Prisma.StringFilter<"Post"> | string
   createdAt?: Prisma.DateTimeFilter<"Post"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Post"> | Date | string
   published?: Prisma.BoolFilter<"Post"> | boolean
@@ -593,7 +593,7 @@ export type PostCreateManyAuthorInput = {
   id?: string
   title: string
   content: string
-  coverImageURL: string
+  coverImageKey: string
   createdAt?: Date | string
   updatedAt?: Date | string
   published?: boolean
@@ -603,7 +603,7 @@ export type PostUpdateWithoutAuthorInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
-  coverImageURL?: Prisma.StringFieldUpdateOperationsInput | string
+  coverImageKey?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   published?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -614,7 +614,7 @@ export type PostUncheckedUpdateWithoutAuthorInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
-  coverImageURL?: Prisma.StringFieldUpdateOperationsInput | string
+  coverImageKey?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   published?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -625,7 +625,7 @@ export type PostUncheckedUpdateManyWithoutAuthorInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   title?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
-  coverImageURL?: Prisma.StringFieldUpdateOperationsInput | string
+  coverImageKey?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   published?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -666,7 +666,7 @@ export type PostSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   id?: boolean
   title?: boolean
   content?: boolean
-  coverImageURL?: boolean
+  coverImageKey?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   published?: boolean
@@ -680,7 +680,7 @@ export type PostSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   id?: boolean
   title?: boolean
   content?: boolean
-  coverImageURL?: boolean
+  coverImageKey?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   published?: boolean
@@ -692,7 +692,7 @@ export type PostSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   id?: boolean
   title?: boolean
   content?: boolean
-  coverImageURL?: boolean
+  coverImageKey?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   published?: boolean
@@ -704,14 +704,14 @@ export type PostSelectScalar = {
   id?: boolean
   title?: boolean
   content?: boolean
-  coverImageURL?: boolean
+  coverImageKey?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   published?: boolean
   authorId?: boolean
 }
 
-export type PostOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "content" | "coverImageURL" | "createdAt" | "updatedAt" | "published" | "authorId", ExtArgs["result"]["post"]>
+export type PostOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "content" | "coverImageKey" | "createdAt" | "updatedAt" | "published" | "authorId", ExtArgs["result"]["post"]>
 export type PostInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   categories?: boolean | Prisma.Post$categoriesArgs<ExtArgs>
   author?: boolean | Prisma.Post$authorArgs<ExtArgs>
@@ -734,7 +734,7 @@ export type $PostPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     id: string
     title: string
     content: string
-    coverImageURL: string
+    coverImageKey: string
     createdAt: Date
     updatedAt: Date
     published: boolean
@@ -1167,7 +1167,7 @@ export interface PostFieldRefs {
   readonly id: Prisma.FieldRef<"Post", 'String'>
   readonly title: Prisma.FieldRef<"Post", 'String'>
   readonly content: Prisma.FieldRef<"Post", 'String'>
-  readonly coverImageURL: Prisma.FieldRef<"Post", 'String'>
+  readonly coverImageKey: Prisma.FieldRef<"Post", 'String'>
   readonly createdAt: Prisma.FieldRef<"Post", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Post", 'DateTime'>
   readonly published: Prisma.FieldRef<"Post", 'Boolean'>

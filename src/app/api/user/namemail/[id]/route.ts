@@ -2,10 +2,14 @@ import { prisma } from "@/lib/prisma";
 import { NextResponse, NextRequest } from "next/server";
 export const revalidate = 0; // ◀ サーバサイドのキャッシュを無効化する設定
 export const dynamic = "force-dynamic";
-export const GET = async (req: NextRequest) => {
+type RouteParams = {
+  params: Promise<{
+    id: string;
+  }>;
+};
+export const GET = async (req: NextRequest, routeParams: RouteParams) => {
   try {
-    const searchParams = req.nextUrl.searchParams;
-    const id = searchParams.get("id");
+    const { id } = await routeParams.params;
 
     if (!id) {
       return NextResponse.json(
@@ -14,7 +18,7 @@ export const GET = async (req: NextRequest) => {
       );
     }
     const user = await prisma.user.findUnique({
-      where: { auth_id: id },
+      where: { id: id },
       select: {
         id: true,
         email: true,
@@ -28,6 +32,7 @@ export const GET = async (req: NextRequest) => {
         { status: 404 },
       );
     }
+    console.log(user);
     return NextResponse.json({ user });
   } catch (error) {
     console.error("ユーザー情報の取得エラー:", error);

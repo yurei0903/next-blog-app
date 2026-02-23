@@ -19,7 +19,7 @@ model Post {
   id             String @id @default(uuid())
   title          String
   content        String
-  coverImageURL  String
+  coverImageKey  String
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
   categories     PostCategory[]
@@ -53,6 +53,7 @@ model User {
   auth_id     String @unique
   email       String  @unique
   name        String?
+  ImageKey    String
   
   posts Post[]
 }

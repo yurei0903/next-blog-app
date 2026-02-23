@@ -17,11 +17,12 @@
     "@prisma/client": "^7.2.0",
     "@supabase/ssr": "^0.8.0",
     "@supabase/supabase-js": "^2.97.0",
+    "crypto-js": "^4.2.0",
     "date-fns": "^4.1.0",
     "dayjs": "^1.11.19",
     "isomorphic-dompurify": "^2.35.0",
     "next": "^15.6.0-canary.58",
-    "pg": "^8.16.3",
+    "pg": "^8.18.0",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "uuid": "^13.0.0"
@@ -29,7 +30,9 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
+    "@types/crypto-js": "^4.2.2",
     "@types/node": "^20",
+    "@types/pg": "^8.16.0",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "baseline-browser-mapping": "^2.10.0",

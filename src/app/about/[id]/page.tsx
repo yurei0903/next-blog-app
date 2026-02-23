@@ -20,7 +20,7 @@ const Page: React.FC = () => {
     // ユーザーのメールアドレスと名前を取得するAPIを呼び出す
     const fechAuthUser = async () => {
       try {
-        const requestUrl = `/api/user/namemail/?id=${id}`;
+        const requestUrl = `/api/user/namemail/${id}`;
         const response = await fetch(requestUrl, {
           method: "GET",
           cache: "no-store",
@@ -29,6 +29,7 @@ const Page: React.FC = () => {
           throw new Error("情報の取得に失敗しました");
         }
         const data = await response.json();
+        console.log("APIから届いたユーザー情報:", data);
         setAuthUser(data.user as User);
       } catch (e) {
         setFetchError(
@@ -53,7 +54,7 @@ const Page: React.FC = () => {
         }
 
         const data = await response.json();
-        setPosts(data as Post[]); // ※APIの返し方( { posts: [...] } )に合わせて調整してください
+        setPosts(data as Post[]); // ※APIの返し方( { posts: [...] } )に合わせる
       } catch (e) {
         setFetchError(
           e instanceof Error ? e.message : "予期せぬエラーが発生しました",

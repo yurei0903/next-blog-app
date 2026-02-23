@@ -6,7 +6,7 @@ export const dynamic = "force-dynamic";
 type RequestBody = {
   title: string;
   content: string;
-  coverImageURL: string;
+  coverImageKey: string;
   categoryIds: string[];
   published: boolean;
   author: User;
@@ -47,7 +47,7 @@ export const POST = async (req: NextRequest) => {
     const requestBody: RequestBody = await req.json();
 
     // 分割代入
-    const { title, content, coverImageURL, categoryIds, published } =
+    const { title, content, coverImageKey, categoryIds, published } =
       requestBody;
 
     // categoryIds で指定されるカテゴリがDB上に存在するか確認
@@ -69,7 +69,7 @@ export const POST = async (req: NextRequest) => {
       data: {
         title, // title: title の省略形であることに注意。以下も同様
         content,
-        coverImageURL,
+        coverImageKey,
         published,
         authorId: dbUser.id, // 🌟 ここで「自分のユーザーID」をセットすることが重要！
       },

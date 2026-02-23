@@ -14,7 +14,19 @@ const AdminPostSummary: React.FC<Props> = ({ post, onDelete }) => {
     <div className="border border-slate-400 bg-white p-3">
       {/* 全体をLinkで囲まず、日付やタイトルだけ表示 */}
       <div>{dayjs(post.createdAt).format("YYYY/MM/DD HH:mm")}</div>
-
+      {/* 公開状態の表示 */}
+      <div className="category-list mb-2 flex justify-end">
+        {post.published && (
+          <div className="mr-2 inline-block rounded-full bg-green-500 px-3 py-1 text-xs text-white">
+            公開中
+          </div>
+        )}
+        {!post.published && (
+          <div className="mr-2 inline-block rounded-full bg-red-500 px-3 py-1 text-xs text-white">
+            非公開
+          </div>
+        )}
+      </div>
       <div className="font-bold">
         {/* タイトルだけリンクにするならここをLinkで囲む */}
         <Link href={`/posts/${post.id}`} className="hover:underline">

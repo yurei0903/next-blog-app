@@ -25,7 +25,7 @@ const Header: React.FC = () => {
         >
           <div>
             <FontAwesomeIcon icon={faFish} className="mr-1" />
-            Header
+            BlogApp
           </div>
           <div className="flex gap-x-6">
             {!isLoading &&
@@ -34,8 +34,15 @@ const Header: React.FC = () => {
               ) : (
                 <Link href="/login">Login</Link>
               ))}
+
             {/* ▲ 追加 */}
-            <Link href="/about">About</Link>
+            <Link href="/">Post</Link>
+            {!isLoading &&
+              (session ? (
+                <Link href="/admin/about">My Page</Link>
+              ) : (
+                <Link href="/signup">Sign Up</Link>
+              ))}
           </div>
         </div>
       </div>

@@ -11,8 +11,9 @@ type RouteParams = {
 type RequestBody = {
   title: string;
   content: string;
-  coverImageURL: string;
+  coverImageKey: string;
   categoryIds: string[];
+  published: boolean;
 };
 
 export const PUT = async (req: NextRequest, routeParams: RouteParams) => {
@@ -25,7 +26,8 @@ export const PUT = async (req: NextRequest, routeParams: RouteParams) => {
 
     // 分割代入
     const { id } = await routeParams.params;
-    const { title, content, coverImageURL, categoryIds } = requestBody;
+    const { title, content, coverImageKey, categoryIds, published } =
+      requestBody;
     const categories = await prisma.category.findMany({
       where: {
         id: {
@@ -47,7 +49,7 @@ export const PUT = async (req: NextRequest, routeParams: RouteParams) => {
 
     const post: Post = await prisma.post.update({
       where: { id },
-      data: { title, content, coverImageURL },
+      data: { title, content, coverImageKey, published },
     });
     for (const categoryId of categoryIds) {
       await prisma.postCategory.create({

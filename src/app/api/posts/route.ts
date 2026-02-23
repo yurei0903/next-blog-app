@@ -10,6 +10,7 @@ export const GET = async (req: NextRequest) => {
   const categoryId = serchParams.get("categoryId");
   const authorId = serchParams.get("authorId");
   const keywords = serchParams.get("keywords");
+  const published = serchParams.get("published");
   const whereConditions: Prisma.PostWhereInput = {};
   if (categoryId) {
     whereConditions.categories = {
@@ -26,6 +27,10 @@ export const GET = async (req: NextRequest) => {
       { title: { contains: keywords } },
       { content: { contains: keywords } },
     ];
+  }
+  whereConditions.published = true;
+  if (published === "false") {
+    whereConditions.published = false;
   }
   try {
     const posts = await prisma.post.findMany({

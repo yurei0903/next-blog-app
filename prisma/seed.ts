@@ -12,6 +12,7 @@ const main = async () => {
       auth_id: "dummy-uuid-1",
       email: "user1@example.com",
       name: "ユーザー1",
+      ImageKey: "",
     },
   });
 
@@ -20,6 +21,7 @@ const main = async () => {
       auth_id: "dummy-uuid-2",
       email: "user2@example.com",
       name: "ユーザー2",
+      ImageKey: "",
     },
   });
   // カテゴリデータの作成 (レコードのInsert)
@@ -33,8 +35,7 @@ const main = async () => {
     data: {
       title: "投稿1",
       content: "投稿1の本文。<br/>投稿1の本文。投稿1の本文。",
-      coverImageURL:
-        "https://w1980.blob.core.windows.net/pg3/cover-img-red.jpg",
+      coverImageKey: "cover-img-green.jpg",
       published: true,
       authorId: u1.id,
       categories: {
@@ -47,8 +48,7 @@ const main = async () => {
     data: {
       title: "投稿2",
       content: "投稿2の本文。<br/>投稿2の本文。投稿2の本文。",
-      coverImageURL:
-        "https://w1980.blob.core.windows.net/pg3/cover-img-green.jpg",
+      coverImageKey: "cover-img-green.jpg",
       published: true,
       authorId: u1.id,
       categories: {
@@ -61,8 +61,7 @@ const main = async () => {
     data: {
       title: "投稿3",
       content: "投稿3の本文。<br/>投稿3の本文。投稿3の本文。",
-      coverImageURL:
-        "https://w1980.blob.core.windows.net/pg3/cover-img-yellow.jpg",
+      coverImageKey: "cover-img-green.jpg",
       published: true,
       authorId: u2.id,
       categories: {
@@ -79,8 +78,7 @@ const main = async () => {
     data: {
       title: "投稿4",
       content: "投稿4の本文。<br/>投稿4の本文。投稿4の本文。",
-      coverImageURL:
-        "https://w1980.blob.core.windows.net/pg3/cover-img-purple.jpg",
+      coverImageKey: "cover-img-green.jpg",
       published: false, // 公開前の下書きという設定
       authorId: u1.id,
       categories: {

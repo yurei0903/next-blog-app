@@ -20,7 +20,7 @@ export const GET = async (req: NextRequest, routeParams: RouteParams) => {
         content: true,
         createdAt: true,
         updatedAt: true,
-        coverImageURL: true,
+        coverImageKey: true,
         categories: {
           select: {
             category: {

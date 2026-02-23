@@ -29,6 +29,7 @@ export type UserMinAggregateOutputType = {
   auth_id: string | null
   email: string | null
   name: string | null
+  ImageKey: string | null
 }
 
 export type UserMaxAggregateOutputType = {
@@ -36,6 +37,7 @@ export type UserMaxAggregateOutputType = {
   auth_id: string | null
   email: string | null
   name: string | null
+  ImageKey: string | null
 }
 
 export type UserCountAggregateOutputType = {
@@ -43,6 +45,7 @@ export type UserCountAggregateOutputType = {
   auth_id: number
   email: number
   name: number
+  ImageKey: number
   _all: number
 }
 
@@ -52,6 +55,7 @@ export type UserMinAggregateInputType = {
   auth_id?: true
   email?: true
   name?: true
+  ImageKey?: true
 }
 
 export type UserMaxAggregateInputType = {
@@ -59,6 +63,7 @@ export type UserMaxAggregateInputType = {
   auth_id?: true
   email?: true
   name?: true
+  ImageKey?: true
 }
 
 export type UserCountAggregateInputType = {
@@ -66,6 +71,7 @@ export type UserCountAggregateInputType = {
   auth_id?: true
   email?: true
   name?: true
+  ImageKey?: true
   _all?: true
 }
 
@@ -146,6 +152,7 @@ export type UserGroupByOutputType = {
   auth_id: string
   email: string
   name: string | null
+  ImageKey: string
   _count: UserCountAggregateOutputType | null
   _min: UserMinAggregateOutputType | null
   _max: UserMaxAggregateOutputType | null
@@ -174,6 +181,7 @@ export type UserWhereInput = {
   auth_id?: Prisma.StringFilter<"User"> | string
   email?: Prisma.StringFilter<"User"> | string
   name?: Prisma.StringNullableFilter<"User"> | string | null
+  ImageKey?: Prisma.StringFilter<"User"> | string
   posts?: Prisma.PostListRelationFilter
 }
 
@@ -182,6 +190,7 @@ export type UserOrderByWithRelationInput = {
   auth_id?: Prisma.SortOrder
   email?: Prisma.SortOrder
   name?: Prisma.SortOrderInput | Prisma.SortOrder
+  ImageKey?: Prisma.SortOrder
   posts?: Prisma.PostOrderByRelationAggregateInput
 }
 
@@ -193,6 +202,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.UserWhereInput[]
   NOT?: Prisma.UserWhereInput | Prisma.UserWhereInput[]
   name?: Prisma.StringNullableFilter<"User"> | string | null
+  ImageKey?: Prisma.StringFilter<"User"> | string
   posts?: Prisma.PostListRelationFilter
 }, "id" | "auth_id" | "email">
 
@@ -201,6 +211,7 @@ export type UserOrderByWithAggregationInput = {
   auth_id?: Prisma.SortOrder
   email?: Prisma.SortOrder
   name?: Prisma.SortOrderInput | Prisma.SortOrder
+  ImageKey?: Prisma.SortOrder
   _count?: Prisma.UserCountOrderByAggregateInput
   _max?: Prisma.UserMaxOrderByAggregateInput
   _min?: Prisma.UserMinOrderByAggregateInput
@@ -214,6 +225,7 @@ export type UserScalarWhereWithAggregatesInput = {
   auth_id?: Prisma.StringWithAggregatesFilter<"User"> | string
   email?: Prisma.StringWithAggregatesFilter<"User"> | string
   name?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
+  ImageKey?: Prisma.StringWithAggregatesFilter<"User"> | string
 }
 
 export type UserCreateInput = {
@@ -221,6 +233,7 @@ export type UserCreateInput = {
   auth_id: string
   email: string
   name?: string | null
+  ImageKey: string
   posts?: Prisma.PostCreateNestedManyWithoutAuthorInput
 }
 
@@ -229,6 +242,7 @@ export type UserUncheckedCreateInput = {
   auth_id: string
   email: string
   name?: string | null
+  ImageKey: string
   posts?: Prisma.PostUncheckedCreateNestedManyWithoutAuthorInput
 }
 
@@ -237,6 +251,7 @@ export type UserUpdateInput = {
   auth_id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ImageKey?: Prisma.StringFieldUpdateOperationsInput | string
   posts?: Prisma.PostUpdateManyWithoutAuthorNestedInput
 }
 
@@ -245,6 +260,7 @@ export type UserUncheckedUpdateInput = {
   auth_id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ImageKey?: Prisma.StringFieldUpdateOperationsInput | string
   posts?: Prisma.PostUncheckedUpdateManyWithoutAuthorNestedInput
 }
 
@@ -253,6 +269,7 @@ export type UserCreateManyInput = {
   auth_id: string
   email: string
   name?: string | null
+  ImageKey: string
 }
 
 export type UserUpdateManyMutationInput = {
@@ -260,6 +277,7 @@ export type UserUpdateManyMutationInput = {
   auth_id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ImageKey?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type UserUncheckedUpdateManyInput = {
@@ -267,6 +285,7 @@ export type UserUncheckedUpdateManyInput = {
   auth_id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ImageKey?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type UserNullableScalarRelationFilter = {
@@ -279,6 +298,7 @@ export type UserCountOrderByAggregateInput = {
   auth_id?: Prisma.SortOrder
   email?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  ImageKey?: Prisma.SortOrder
 }
 
 export type UserMaxOrderByAggregateInput = {
@@ -286,6 +306,7 @@ export type UserMaxOrderByAggregateInput = {
   auth_id?: Prisma.SortOrder
   email?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  ImageKey?: Prisma.SortOrder
 }
 
 export type UserMinOrderByAggregateInput = {
@@ -293,6 +314,7 @@ export type UserMinOrderByAggregateInput = {
   auth_id?: Prisma.SortOrder
   email?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  ImageKey?: Prisma.SortOrder
 }
 
 export type UserCreateNestedOneWithoutPostsInput = {
@@ -316,6 +338,7 @@ export type UserCreateWithoutPostsInput = {
   auth_id: string
   email: string
   name?: string | null
+  ImageKey: string
 }
 
 export type UserUncheckedCreateWithoutPostsInput = {
@@ -323,6 +346,7 @@ export type UserUncheckedCreateWithoutPostsInput = {
   auth_id: string
   email: string
   name?: string | null
+  ImageKey: string
 }
 
 export type UserCreateOrConnectWithoutPostsInput = {
@@ -346,6 +370,7 @@ export type UserUpdateWithoutPostsInput = {
   auth_id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ImageKey?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type UserUncheckedUpdateWithoutPostsInput = {
@@ -353,6 +378,7 @@ export type UserUncheckedUpdateWithoutPostsInput = {
   auth_id?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ImageKey?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 
@@ -391,6 +417,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   auth_id?: boolean
   email?: boolean
   name?: boolean
+  ImageKey?: boolean
   posts?: boolean | Prisma.User$postsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
@@ -400,6 +427,7 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   auth_id?: boolean
   email?: boolean
   name?: boolean
+  ImageKey?: boolean
 }, ExtArgs["result"]["user"]>
 
 export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -407,6 +435,7 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   auth_id?: boolean
   email?: boolean
   name?: boolean
+  ImageKey?: boolean
 }, ExtArgs["result"]["user"]>
 
 export type UserSelectScalar = {
@@ -414,9 +443,10 @@ export type UserSelectScalar = {
   auth_id?: boolean
   email?: boolean
   name?: boolean
+  ImageKey?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "auth_id" | "email" | "name", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "auth_id" | "email" | "name" | "ImageKey", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   posts?: boolean | Prisma.User$postsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
@@ -434,6 +464,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     auth_id: string
     email: string
     name: string | null
+    ImageKey: string
   }, ExtArgs["result"]["user"]>
   composites: {}
 }
@@ -862,6 +893,7 @@ export interface UserFieldRefs {
   readonly auth_id: Prisma.FieldRef<"User", 'String'>
   readonly email: Prisma.FieldRef<"User", 'String'>
   readonly name: Prisma.FieldRef<"User", 'String'>
+  readonly ImageKey: Prisma.FieldRef<"User", 'String'>
 }
     
 
