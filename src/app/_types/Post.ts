@@ -1,8 +1,10 @@
 import type { Category } from "./Category";
 import type { CoverImage } from "./CoverImage";
+import type { User } from "./User";
 type PostCategory = {
   category: Category;
 };
+
 export type Post = {
   id: string;
   title: string;
@@ -11,4 +13,5 @@ export type Post = {
   updatedAt: string;
   categories: PostCategory[];
   coverImageURL: string;
+  author: User;
 };

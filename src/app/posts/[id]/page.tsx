@@ -71,14 +71,14 @@ const Page: React.FC = () => {
             ))}
           </div>
           <div>
-            {post.coverImageURL && (
+            {/**{post.coverImageURL && (
               <Image
                 src={post.coverImageURL}
                 alt="Example Image"
                 priority
                 className="rounded-xl"
               />
-            )}
+            )}**/}
           </div>
           <div dangerouslySetInnerHTML={{ __html: safeHTML }} />
         </div>
