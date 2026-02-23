@@ -62,7 +62,7 @@ const Page: React.FC = () => {
     };
 
     fetchPosts();
-  }, []);
+  }, [id]);
 
   if (fetchError) {
     return <div>{fetchError}</div>;
