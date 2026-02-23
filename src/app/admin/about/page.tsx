@@ -42,7 +42,7 @@ const Page: React.FC = () => {
   }, [authUser]);
   useEffect(() => {
     if (!token) return;
-
+    if (!editImageKey) return;
     // 1. useEffectの中にasync関数を定義する
     const updateImage = async () => {
       try {
@@ -80,7 +80,7 @@ const Page: React.FC = () => {
 
     // 2. 定義したasync関数をここで呼び出す
     updateImage();
-  }, [token, authUser]); // 依存配列も必要なものを追加しています
+  }, [token, authUser, editImageKey]); // 依存配列も必要なものを追加しています
   useEffect(() => {
     // 認証確認中またはトークンがない場合は、データの取得を行わない
     if (isLoading || !token) return;
