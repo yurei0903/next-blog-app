@@ -43,9 +43,6 @@ const Page: React.FC = () => {
   useEffect(() => {
     if (!token) return;
 
-    // 画像のキーがない場合は処理しない（※元のコードの !editImageKey だと逆の意味になるため修正推奨です）
-    if (!editImageKey) return;
-
     // 1. useEffectの中にasync関数を定義する
     const updateImage = async () => {
       try {
@@ -60,10 +57,8 @@ const Page: React.FC = () => {
             Authorization: token,
           },
           body: JSON.stringify({
-            name: authUser?.name || "",
-            email: authUser?.email,
-            // 🚨注意: 元のコードの `data.path` はこのスコープに存在しないためエラーになります。
-            // editImageKey を送るのが正しい挙動だと思われるため書き換えています。
+            name: localUser?.name || "",
+            email: localUser?.email || "",
             imageKey: editImageKey,
           }),
         });
@@ -86,7 +81,7 @@ const Page: React.FC = () => {
 
     // 2. 定義したasync関数をここで呼び出す
     updateImage();
-  }, [editImageKey, token, authUser, editEmail]); // 依存配列も必要なものを追加しています
+  }, [token, authUser]); // 依存配列も必要なものを追加しています
   useEffect(() => {
     // 認証確認中またはトークンがない場合は、データの取得を行わない
     if (isLoading || !token) return;
