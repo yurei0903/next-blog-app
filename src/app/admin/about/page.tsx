@@ -59,7 +59,7 @@ const Page: React.FC = () => {
           body: JSON.stringify({
             name: localUser?.name || "",
             email: localUser?.email || "",
-            imageKey: editImageKey,
+            ImageKey: editImageKey,
           }),
         });
 
@@ -70,7 +70,6 @@ const Page: React.FC = () => {
       } catch (error) {
         alert("画像の更新に失敗しました");
       } finally {
-        // ※ここの prev の展開も、必要に応じて調整してください
         setIsEditingEmail(false);
         setIsSubmitting(false);
         setLocalUser((prev) =>
@@ -222,7 +221,7 @@ const Page: React.FC = () => {
         body: JSON.stringify({
           name: editName,
           email: localUser?.email || "", // メールアドレスは変更しないので、現在の値をそのまま送る
-          imageKey: localUser?.ImageKey || "",
+          ImageKey: localUser?.ImageKey || "",
         }),
       });
 
@@ -292,7 +291,7 @@ const Page: React.FC = () => {
         body: JSON.stringify({
           name: localUser?.name || "", // 名前は変更しないので、現在の値をそのまま送る
           email: editEmail,
-          imageKey: localUser?.ImageKey || "",
+          ImageKey: localUser?.ImageKey || "",
         }),
       });
 
