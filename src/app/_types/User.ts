@@ -4,6 +4,6 @@ export type User = {
   auth_id: string | null;
   email: string;
   name: string | null;
-  published: boolean;
+  ImageKey: string | null;
   posts: Post[];
 };

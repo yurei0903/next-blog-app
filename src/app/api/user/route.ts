@@ -21,6 +21,7 @@ export const POST = async (req: NextRequest) => {
         email,
         name,
         auth_id,
+        ImageKey: "",
       },
     });
 

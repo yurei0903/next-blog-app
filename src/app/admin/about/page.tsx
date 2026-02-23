@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 import { twMerge } from "tailwind-merge";
-import { useState, useEffect } from "react";
+import { useState, useEffect, ChangeEvent, use } from "react";
 import type { Post } from "@/app/_types/Post";
 import PostConfig from "@/app/_components/PostConfig";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -9,17 +9,29 @@ import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
 import { useAuth } from "@/app/_hooks/useAuth";
 import ValidationAlert from "@/app/_components/ValidationAlert";
+import CryptoJS from "crypto-js";
+import { supabase } from "@/utils/supabase";
+const calculateMD5Hash = async (file: File): Promise<string> => {
+  const buffer = await file.arrayBuffer();
+  const wordArray = CryptoJS.lib.WordArray.create(buffer);
+  return CryptoJS.MD5(wordArray).toString();
+};
+
 const Page: React.FC = () => {
   const [posts, setPosts] = useState<Post[] | null>(null);
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isEditingName, setIsEditingName] = useState(false);
   const [editName, setEditName] = useState("");
-
+  const [isEditingImageKey, setIsEditingImageKey] = useState(false);
+  const [editImageKey, setEditImageKey] = useState("");
+  const [coverImageUrl, setCoverImageUrl] = useState<string | undefined>();
   const [isEditingEmail, setIsEditingEmail] = useState(false);
   const [editEmail, setEditEmail] = useState("");
   const [nameError, setNameError] = useState("");
   const [emailError, setEmailError] = useState("");
+  const bucketName = "cover-image";
+
   // isLoading（取得中かどうかの判定）も useAuth から受け取ると便利です
   const { token, isLoading, user: authUser } = useAuth();
   const [localUser, setLocalUser] = useState<typeof authUser | null>(null);
@@ -28,6 +40,53 @@ const Page: React.FC = () => {
       setLocalUser(authUser);
     }
   }, [authUser]);
+  useEffect(() => {
+    if (!token) return;
+
+    // 画像のキーがない場合は処理しない（※元のコードの !editImageKey だと逆の意味になるため修正推奨です）
+    if (!editImageKey) return;
+
+    // 1. useEffectの中にasync関数を定義する
+    const updateImage = async () => {
+      try {
+        setIsSubmitting(true);
+        const requestUrl = `/api/admin/user/${authUser?.id}`;
+
+        const res = await fetch(requestUrl, {
+          method: "PUT",
+          cache: "no-store",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: token,
+          },
+          body: JSON.stringify({
+            name: authUser?.name || "",
+            email: authUser?.email,
+            // 🚨注意: 元のコードの `data.path` はこのスコープに存在しないためエラーになります。
+            // editImageKey を送るのが正しい挙動だと思われるため書き換えています。
+            imageKey: editImageKey,
+          }),
+        });
+
+        if (!res.ok) {
+          throw new Error(`${res.status}: ${res.statusText}`);
+        }
+        setIsEditingImageKey(false);
+      } catch (error) {
+        alert("画像の更新に失敗しました");
+      } finally {
+        // ※ここの prev の展開も、必要に応じて調整してください
+        setIsEditingEmail(false);
+        setIsSubmitting(false);
+        setLocalUser((prev) =>
+          prev ? { ...prev, ImageKey: editImageKey } : null,
+        );
+      }
+    };
+
+    // 2. 定義したasync関数をここで呼び出す
+    updateImage();
+  }, [editImageKey, token, authUser, editEmail]); // 依存配列も必要なものを追加しています
   useEffect(() => {
     // 認証確認中またはトークンがない場合は、データの取得を行わない
     if (isLoading || !token) return;
@@ -167,7 +226,8 @@ const Page: React.FC = () => {
         },
         body: JSON.stringify({
           name: editName,
-          email: authUser?.email || "", // メールアドレスは変更しないので、現在の値をそのまま送る
+          email: localUser?.email || "", // メールアドレスは変更しないので、現在の値をそのまま送る
+          imageKey: localUser?.ImageKey || "",
         }),
       });
 
@@ -235,8 +295,9 @@ const Page: React.FC = () => {
           Authorization: token,
         },
         body: JSON.stringify({
-          name: authUser?.name || "", // 名前は変更しないので、現在の値をそのまま送る
+          name: localUser?.name || "", // 名前は変更しないので、現在の値をそのまま送る
           email: editEmail,
+          imageKey: localUser?.ImageKey || "",
         }),
       });
 
@@ -250,6 +311,41 @@ const Page: React.FC = () => {
       setLocalUser((prev) => (prev ? { ...prev, email: editEmail } : null));
       setIsEditingEmail(false);
     }
+  };
+  const handleImageChange = async (e: ChangeEvent<HTMLInputElement>) => {
+    if (!token) {
+      window.alert("予期せぬ動作：トークンが取得できません。");
+      setIsSubmitting(false);
+      return;
+    }
+    setEditImageKey(""); // 画像のキーをリセット
+    setCoverImageUrl(undefined); // 画像のURLをリセット
+
+    // 画像が選択されていない場合は戻る
+    if (!e.target.files || e.target.files.length === 0) return;
+
+    // 複数ファイルが選択されている場合は最初のファイルを使用する
+    const file = e.target.files?.[0];
+    // ファイルのハッシュ値を計算
+    const fileHash = await calculateMD5Hash(file); // ◀ 追加
+    // バケット内のパスを指定
+    const path = `private/${fileHash}`; // ◀ 変更
+    // ファイルが存在する場合は上書きするための設定 → upsert: true
+    const { data, error } = await supabase.storage
+      .from(bucketName)
+      .upload(path, file, { upsert: true });
+
+    if (error || !data) {
+      window.alert(`アップロードに失敗 ${error.message}`);
+      return;
+    }
+    // 画像のキー (実質的にバケット内のパス) を取得
+    setEditImageKey(data.path);
+    const publicUrlResult = supabase.storage
+      .from(bucketName)
+      .getPublicUrl(data.path);
+    // 画像のURLを取得
+    setCoverImageUrl(publicUrlResult.data.publicUrl);
   };
 
   if (fetchError) {
@@ -275,14 +371,48 @@ const Page: React.FC = () => {
           "flex justify-center",
         )}
       >
-        <Image
-          src="/images/ango.png"
-          alt="Example Image"
-          width={350}
-          height={350}
-          priority
-          className="rounded-full border-4 border-slate-500 p-1.5"
+        {/* 外側の丸い枠（ボーダーと余白を担当） */}
+        <div className="relative flex aspect-square w-3/5 max-w-[350px] items-center justify-center rounded-full border-4 border-slate-500 bg-white p-1.5">
+          {/* 内側の画像を切り抜く枠 */}
+          <div className="relative h-full w-full overflow-hidden rounded-full">
+            <Image
+              src={
+                !localUser?.ImageKey
+                  ? "/images/ango.png"
+                  : supabase.storage
+                      .from(bucketName)
+                      .getPublicUrl(localUser.ImageKey).data.publicUrl
+              }
+              alt="Profile Image"
+              fill // width/height の代わりに親要素を埋める fill を使用
+              sizes="350px"
+              priority
+              className="object-cover" // ここで比率を保ったまま枠を埋める
+            />
+          </div>
+        </div>
+      </div>
+      <div className="flex justify-center">
+        {" "}
+        {/* 中央寄せのためにクラス追加 */}
+        {/* ▼ 実際のinputタグは隠します (hiddenクラスを追加) ▼ */}
+        <input
+          id="imgSelector"
+          type="file"
+          accept="image/*"
+          onChange={handleImageChange}
+          className="hidden" // ここが重要
         />
+        <label
+          htmlFor="imgSelector" // inputのidと同じにする
+          className={twMerge(
+            "cursor-pointer rounded px-4 py-2 font-bold text-white",
+            "bg-blue-500 hover:bg-blue-600",
+            "transition-colors duration-200",
+          )}
+        >
+          画像を変更する
+        </label>
       </div>
       {isSubmitting && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
@@ -297,6 +427,9 @@ const Page: React.FC = () => {
       )}
       <div>
         {/* authUserの中に入っている名前とメールアドレスを表示 */}
+        <div className="mb-2 text-sm text-slate-500">
+          {localUser?.name || "名無しユーザー"} ({localUser?.email})
+        </div>
         <div className="space-y-4">
           {/* --- 名前の表示・編集エリア --- */}
           <div>

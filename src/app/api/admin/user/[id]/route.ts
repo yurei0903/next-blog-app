@@ -11,6 +11,7 @@ type RouteParams = {
 type RequestBody = {
   name: string;
   email: string;
+  ImageKey: string;
 };
 
 export const PUT = async (req: NextRequest, routeParams: RouteParams) => {
@@ -23,10 +24,11 @@ export const PUT = async (req: NextRequest, routeParams: RouteParams) => {
 
     // 分割代入
     const { id } = await routeParams.params;
-    const { name, email } = requestBody;
+    const { name, email, ImageKey } = requestBody;
+
     const user: User = await prisma.user.update({
       where: { id },
-      data: { name, email },
+      data: { name, email, ImageKey },
     });
 
     return NextResponse.json(user);
